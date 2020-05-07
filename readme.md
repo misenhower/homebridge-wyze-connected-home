@@ -6,7 +6,7 @@ Currently this plugin only supports the Wyze Plug accessory, but I might add oth
 
 ## Configuration
 
-Add the following to the `platforms` section of your config file:
+Use the settings UI in Homebridge Config UI X or add the following to the `platforms` section of your config file:
 
 ```js
 {

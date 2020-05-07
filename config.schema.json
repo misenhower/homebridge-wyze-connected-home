@@ -1,0 +1,40 @@
+{
+  "pluginAlias": "WyzeConnectedHome",
+  "pluginType": "platform",
+  "singular": true,
+  "schema": {
+    "type": "object",
+    "properties": {
+      "name": {
+        "title": "Plugin Name",
+        "description": "This name will appear in your Homebridge log",
+        "type": "string",
+        "default": "Wyze",
+        "required": true
+      },
+      "username": {
+        "title": "Username (E-Mail Address)",
+        "description": "The e-mail address used for your Wyze account",
+        "type": "string",
+        "default": "",
+        "required": true
+      },
+      "password": {
+        "title": "Password",
+        "description": "The password used for your Wyze account",
+        "type": "string",
+        "default": "",
+        "required": true
+      },
+      "refreshInterval": {
+        "title": "Refresh Interval",
+        "description": "Specify the number of milliseconds to wait between updates, default is 10000 ms (10 seconds)",
+        "type": "integer",
+        "default": 10000,
+        "required": false
+      }
+    }
+  },
+  "form": null,
+  "display": null
+}
