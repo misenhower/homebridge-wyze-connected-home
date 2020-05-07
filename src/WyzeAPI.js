@@ -59,6 +59,8 @@ module.exports = class WyzeAPI {
       throw new Error('AccessTokenError');
     }
 
+    this.log.debug(`API response: ${JSON.stringify(result.data)}`);
+
     // Catch-all error
     if (result.data.msg) {
       throw new Error(result.data.msg);
@@ -96,12 +98,6 @@ module.exports = class WyzeAPI {
     const result = await this.request('app/v2/home_page/get_object_list', this.getRequestData());
 
     return result.data;
-  }
-
-  async getDevices() {
-    const objects = await this.getObjectList();
-
-    return objects.data.device_list;
   }
 
   async setProperty(deviceMac, deviceModel, propertyId, propertyValue) {

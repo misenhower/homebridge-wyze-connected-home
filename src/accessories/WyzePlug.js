@@ -10,9 +10,7 @@ module.exports = class WyzePlug extends WyzeAccessory {
     this.getOnCharacteristic().on('set', this.set.bind(this));
   }
 
-  update(device) {
-    super.update(device);
-
+  updateCharacteristics(device) {
     this.getOnCharacteristic().updateValue(device.device_params.switch_state);
   }
 
@@ -34,7 +32,7 @@ module.exports = class WyzePlug extends WyzeAccessory {
     this.plugin.log.info(`Setting power for ${this.homeKitAccessory.context.mac} to ${value}`);
 
     try {
-      await this.plugin.client.setProperty(this.mac, this.product_model, WYZE_API_POWER_PROPERTY, (value) ? '1' : '0');
+      await this.setProperty(WYZE_API_POWER_PROPERTY, (value) ? '1' : '0');
       callback();
     } catch (e) {
       callback(e);

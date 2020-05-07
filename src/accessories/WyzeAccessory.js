@@ -1,7 +1,13 @@
 const { Service, Characteristic } = require('../types');
 
+// Responses from the Wyze API can lag a little after a new value is set
+const UPDATE_THROTTLE_MS = 1000;
+
 module.exports = class WyzeAccessory {
   constructor(plugin, homeKitAccessory) {
+    this.updating = false;
+    this.lastTimestamp = null;
+
     this.plugin = plugin;
     this.homeKitAccessory = homeKitAccessory;
   }
@@ -23,7 +29,7 @@ module.exports = class WyzeAccessory {
     return this.mac === device.mac;
   }
 
-  update(device) {
+  update(device, timestamp) {
     this.homeKitAccessory.context = {
       mac: device.mac,
       product_type: device.product_type,
@@ -35,5 +41,37 @@ module.exports = class WyzeAccessory {
       .setCharacteristic(Characteristic.Manufacturer, 'Wyze')
       .setCharacteristic(Characteristic.Model, device.product_model)
       .setCharacteristic(Characteristic.SerialNumber, device.mac);
+
+    if (this.shouldUpdateCharacteristics(timestamp)) {
+      this.updateCharacteristics(device);
+    }
+  }
+
+  shouldUpdateCharacteristics(timestamp) {
+    if (this.updating) {
+      return false;
+    }
+
+    if (this.lastTimestamp && timestamp <= (this.lastTimestamp + UPDATE_THROTTLE_MS)) {
+      return false;
+    }
+
+    return true;
+  }
+
+  updateCharacteristics(device) {
+    //
+  }
+
+  async setProperty(property, value) {
+    try {
+      this.updating = true;
+
+      let response = await this.plugin.client.setProperty(this.mac, this.product_model, property, value);
+
+      this.lastTimestamp = response.ts;
+    } finally {
+      this.updating = false;
+    }
   }
 };
