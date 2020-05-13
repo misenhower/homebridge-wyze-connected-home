@@ -7,6 +7,7 @@
   "keywords": [
     "homebridge-plugin"
   ],
+  "homepage": "http://github.com/misenhower/homebridge-wyze-connected-home",
   "repository": {
     "type": "git",
     "url": "git://github.com/misenhower/homebridge-wyze-connected-home.git"
