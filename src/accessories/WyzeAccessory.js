@@ -29,7 +29,7 @@ module.exports = class WyzeAccessory {
     return this.mac === device.mac;
   }
 
-  update(device, timestamp) {
+  async update(device, timestamp) {
     this.homeKitAccessory.context = {
       mac: device.mac,
       product_type: device.product_type,
@@ -43,7 +43,7 @@ module.exports = class WyzeAccessory {
       .setCharacteristic(Characteristic.SerialNumber, device.mac);
 
     if (this.shouldUpdateCharacteristics(timestamp)) {
-      this.updateCharacteristics(device);
+      await this.updateCharacteristics(device);
     }
   }
 
@@ -61,6 +61,12 @@ module.exports = class WyzeAccessory {
 
   updateCharacteristics(device) {
     //
+  }
+
+  async getPropertyList() {
+    let response = await this.plugin.client.getPropertyList(this.mac, this.product_model);
+
+    return response;
   }
 
   async setProperty(property, value) {

@@ -1,6 +1,7 @@
 const { homebridge, Accessory, UUIDGen } = require('./types');
 const WyzeAPI = require('./WyzeAPI');
 const WyzePlug = require('./accessories/WyzePlug');
+const WyzeLight = require('./accessories/WyzeLight');
 
 const PLUGIN_NAME = 'homebridge-wyze-connected-home';
 const PLATFORM_NAME = 'WyzeConnectedHome';
@@ -61,18 +62,18 @@ module.exports = class WyzeConnectedHome {
       let devices = objectList.data.device_list;
 
       this.log.debug(`Found ${devices.length} device(s)`);
-      this.loadDevices(devices, timestamp);
+      await this.loadDevices(devices, timestamp);
     } catch (e) {
       this.log.error(`Error getting devices: ${e}`);
       throw e;
     }
   }
 
-  loadDevices(devices, timestamp) {
+  async loadDevices(devices, timestamp) {
     let foundAccessories = [];
 
     for (let device of devices) {
-      let accessory = this.loadDevice(device, timestamp);
+      let accessory = await this.loadDevice(device, timestamp);
       if (accessory) {
         foundAccessories.push(accessory);
       }
@@ -88,7 +89,7 @@ module.exports = class WyzeConnectedHome {
     this.accessories = foundAccessories;
   }
 
-  loadDevice(device, timestamp) {
+  async loadDevice(device, timestamp) {
     let accessoryClass = this.getAccessoryClass(device.product_type);
     if (!accessoryClass) {
       this.log.debug(`Unsupported device type: ${device.product_type}`);
@@ -103,7 +104,7 @@ module.exports = class WyzeConnectedHome {
       this.accessories.push(accessory);
     }
 
-    accessory.update(device, timestamp);
+    await accessory.update(device, timestamp);
 
     return accessory;
   }
@@ -112,6 +113,8 @@ module.exports = class WyzeConnectedHome {
     switch (type) {
       case 'Plug':
         return WyzePlug;
+      case 'Light':
+        return WyzeLight;
     }
   }
 

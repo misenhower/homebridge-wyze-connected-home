@@ -100,6 +100,20 @@ module.exports = class WyzeAPI {
     return result.data;
   }
 
+  async getPropertyList(deviceMac, deviceModel) {
+    await this.maybeLogin();
+
+    const data = {
+      ...this.getRequestData(),
+      device_mac: deviceMac,
+      device_model: deviceModel,
+    };
+
+    const result = await this.request('app/v2/device/get_property_list', data);
+
+    return result.data;
+  }
+
   async setProperty(deviceMac, deviceModel, propertyId, propertyValue) {
     await this.maybeLogin();
 
