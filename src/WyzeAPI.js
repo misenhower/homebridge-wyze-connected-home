@@ -37,7 +37,7 @@ module.exports = class WyzeAPI {
       return this._performRequest(url, data);
     } catch (e) {
       this.log.debug(e);
-      this.log.debug('Error, logging in and trying again');
+      this.log.error('Error, logging in and trying again');
 
       // Log in and try again
       await this.login();
@@ -83,7 +83,7 @@ module.exports = class WyzeAPI {
     this.accessToken = result.data.data.access_token;
     this.refreshToken = result.data.data.refresh_token;
 
-    this.log.debug('Successfully logged into Wyze API');
+    this.log.info('Successfully logged into Wyze API');
   }
 
   async maybeLogin() {
