@@ -34,7 +34,7 @@ module.exports = class WyzeAPI {
 
   async request(url, data = {}) {
     try {
-      return this._performRequest(url, data);
+      return await this._performRequest(url, data);
     } catch (e) {
       this.log.debug(e);
       this.log.error('Error, logging in and trying again');
