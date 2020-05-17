@@ -35,6 +35,7 @@ module.exports = class WyzeConnectedHome {
       username: this.config.username,
       password: this.config.password,
       phoneId: this.config.phoneId,
+      mfaCode: this.config.mfaCode || ""
     }, this.log);
   }
 
