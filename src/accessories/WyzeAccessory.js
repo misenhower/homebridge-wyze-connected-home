@@ -13,7 +13,7 @@ module.exports = class WyzeAccessory {
   }
   
   get display_name() {
-	  return this.homeKitAccessory.displayName;
+    return this.homeKitAccessory.displayName;
   }
 
   get mac() {

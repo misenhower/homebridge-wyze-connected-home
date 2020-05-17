@@ -3,6 +3,7 @@
 
 ### v0.5.0
 - Added support to Contact and Motion sensors
+- Added support to two factor authentication (2FA) via Authenticator app
 
 ### v0.4.1
 - Fix an issue that prevented the auto re-login from working

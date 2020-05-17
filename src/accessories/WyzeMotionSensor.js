@@ -12,7 +12,7 @@ module.exports = class WyzeMotionSensor extends WyzeAccessory {
   }
 
   getSensorService() {
-	this.plugin.log.debug('[MotionSensor] Retrieving previous service for ' + this.display_name + '"');
+    this.plugin.log.debug('[MotionSensor] Retrieving previous service for ' + this.display_name + '"');
     let service = this.homeKitAccessory.getService(HOMEBRIDGE_SERVICE);
 
     if (!service) {
@@ -24,13 +24,13 @@ module.exports = class WyzeMotionSensor extends WyzeAccessory {
   }
 
   getOnCharacteristic() {
-	this.plugin.log.debug('[MotionSensor] Fetching status of ' + this.display_name + '"');
+    this.plugin.log.debug('[MotionSensor] Fetching status of ' + this.display_name + '"');
     return this.getSensorService().getCharacteristic(HOMEBRIDGE_CHARACTERISTIC);
   }
   
   updateCharacteristics(device) {
-	this.plugin.log.debug('[MotionSensor] Updating status of ' + this.display_name + '"');
-	this.getOnCharacteristic().updateValue(device.device_params.motion_state);
+    this.plugin.log.debug('[MotionSensor] Updating status of ' + this.display_name + '"');
+    this.getOnCharacteristic().updateValue(device.device_params.motion_state);
   }
   
 };
