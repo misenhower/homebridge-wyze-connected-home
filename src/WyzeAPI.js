@@ -1,5 +1,8 @@
 const axios = require('axios');
 const md5 = require('md5');
+const fs = require('fs').promises;
+const path = require('path');
+const { homebridge, UUIDGen } = require('./types');
 
 module.exports = class WyzeAPI {
   constructor(options, log) {
@@ -24,8 +27,8 @@ module.exports = class WyzeAPI {
     this.sv = '9d74946e652647e9b6c9d59326aef104';
 
     // Login tokens
-    this.access_token = options.access_token || '';
-    this.refresh_token = options.refresh_token || '';
+    this.access_token = '';
+    this.refresh_token = '';
   }
 
   getRequestData(data = {}) {
@@ -139,13 +142,16 @@ module.exports = class WyzeAPI {
       result = await this._performLoginRequest(data);
     }
 
-    this.access_token = result.data.access_token;
-    this.refresh_token = result.data.refresh_token;
+    await this._updateTokens(result.data);
 
     this.log.info('Successfully logged into Wyze API');
   }
 
   async maybeLogin() {
+    if (!this.access_token) {
+      await this._loadPersistedTokens();
+    }
+
     if (!this.access_token) {
       await this.login();
     }
@@ -159,8 +165,38 @@ module.exports = class WyzeAPI {
 
     const result = await this._performRequest('app/user/refresh_token', data);
 
-    this.access_token = result.data.data.access_token;
-    this.refresh_token = result.data.data.refresh_token;
+    await this._updateTokens(result.data.data);
+  }
+
+  async _updateTokens({ access_token, refresh_token }) {
+    this.access_token = access_token;
+    this.refresh_token = refresh_token;
+    await this._persistTokens();
+  }
+
+  _tokenPersistPath() {
+    const uuid = UUIDGen.generate(this.username);
+    return path.join(homebridge.user.persistPath(), `wyze-${uuid}.json`);
+  }
+
+  async _persistTokens() {
+    const data = {
+      access_token: this.access_token,
+      refresh_token: this.refresh_token,
+    };
+
+    await fs.writeFile(this._tokenPersistPath(), JSON.stringify(data));
+  }
+
+  async _loadPersistedTokens() {
+    try {
+      let data = await fs.readFile(this._tokenPersistPath());
+      data = JSON.parse(data);
+      this.access_token = data.access_token;
+      this.refresh_token = data.refresh_token;
+    } catch (e) {
+      //
+    }
   }
 
   async getObjectList() {
