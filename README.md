@@ -12,9 +12,6 @@ For more information about our version updates, please check our [change log](CH
 
 ## Configuration
 
-Use the settings UI in Homebridge Config UI X or add the following to the platforms section of your config file:
-
-Supported devices will be discovered and added to Homebridge automatically.
 Use the settings UI in Homebridge Config UI X to configure your Wyze account, or manually add the following to the platforms section of your config file:
 
 ```js
@@ -30,6 +27,8 @@ Use the settings UI in Homebridge Config UI X to configure your Wyze account, or
   ]
 }
 ```
+
+Supported devices will be discovered and added to Homebridge automatically.
 
 ### Optional fields
 
