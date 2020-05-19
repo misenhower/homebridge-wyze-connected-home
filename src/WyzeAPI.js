@@ -28,7 +28,7 @@ module.exports = class WyzeAPI {
     this.refresh_token = options.refresh_token || '';
   }
 
-  getRequestData() {
+  getRequestData(data = {}) {
     return {
       'access_token': this.access_token,
       'app_name': this.appName,
@@ -39,26 +39,33 @@ module.exports = class WyzeAPI {
       'sc': this.sc,
       'sv': this.sv,
       'ts': (new Date).getTime(),
+      ...data,
     };
   }
 
   async request(url, data = {}) {
     await this.maybeLogin();
 
-    data = {
-      ...this.getRequestData(),
-      ...data,
-    };
-
     try {
-      return await this._performRequest(url, data);
+      return await this._performRequest(url, this.getRequestData(data));
     } catch (e) {
       this.log.debug(e);
+
+      if (this.refresh_token) {
+        this.log.error('Error, refreshing access token and trying again');
+
+        try {
+          await this.refreshToken();
+          return await this._performRequest(url, this.getRequestData(data));
+        } catch (e) {
+          //
+        }
+      }
+
       this.log.error('Error, logging in and trying again');
 
-      // Log in and try again
       await this.login();
-      return this._performRequest(url, data);
+      return this._performRequest(url, this.getRequestData(data));
     }
   }
 
@@ -142,6 +149,18 @@ module.exports = class WyzeAPI {
     if (!this.access_token) {
       await this.login();
     }
+  }
+
+  async refreshToken() {
+    const data = {
+      ...this.getRequestData(),
+      refresh_token: this.refresh_token,
+    };
+
+    const result = await this._performRequest('app/user/refresh_token', data);
+
+    this.access_token = result.data.data.access_token;
+    this.refresh_token = result.data.data.refresh_token;
   }
 
   async getObjectList() {
