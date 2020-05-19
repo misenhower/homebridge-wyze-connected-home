@@ -5,16 +5,25 @@ module.exports = class WyzeAPI {
   constructor(options, log) {
     this.log = log;
 
-    this.mfaCode = options.mfaCode;
+    // User login parameters
     this.username = options.username;
     this.password = options.password;
-    this.baseUrl = options.baseUrl || 'https://api.wyzecam.com:8443';
+    this.mfaCode = options.mfaCode;
+
+    // URLs
+    this.authBaseUrl = options.authBaseUrl || 'https://auth-prod.api.wyze.com';
+    this.apiBaseUrl = options.apiBaseUrl || options.baseUrl || 'https://api.wyzecam.com';
+
+    // App emulation constants
+    this.authApiKey = options.authApiKey || 'WMXHYf79Nr5gIlt3r0r7p9Tcw5bvs6BB4U8O8nGJ';
     this.phoneId = options.phoneId || 'bc151f39-787b-4871-be27-5a20fd0a1937';
     this.appName = options.appName || 'com.hualai.WyzeCam';
     this.appVer = options.appVer || 'com.hualai.WyzeCam___2.10.72';
     this.appVersion = options.appVersion || '2.10.72';
     this.sc = '9f275790cab94a72bd206c8876429f3c';
     this.sv = '9d74946e652647e9b6c9d59326aef104';
+
+    // Login tokens
     this.accessToken = options.accessToken || '';
     this.refreshToken = options.refreshToken || '';
   }
@@ -46,80 +55,80 @@ module.exports = class WyzeAPI {
     }
   }
 
-  async _performRequest(url, data = {}, headers = {}) {
-    let baseUrl = (url == 'user/login') ? 'https://auth-prod.api.wyze.com' : this.baseUrl;
-
-    const request = {
-      method: 'post',
-      url: url,
-      data: data,
-      baseURL: baseUrl,
-      headers: headers,
+  async _performRequest(url, data = {}, config = {}) {
+    config = {
+      method: 'POST',
+      url,
+      data,
+      baseURL: this.apiBaseUrl,
+      ...config,
     };
 
     this.log.debug(`Performing request: ${url}`);
-    this.log.debug(request);
+    this.log.debug(`Request config: ${JSON.stringify(config)}`);
+
+    let result;
 
     try {
-      let result = await axios(request);
-      this.log.debug('Response:');
-      this.log.debug(result);
-      return result;
+      result = await axios(config);
+      this.log.debug(`API response: ${JSON.stringify(result.data)}`);
     } catch (e) {
-      let response = e.response;
-      this.log.error(`REQUEST: ${e} - ${response.statusText}`);
-      this.log.error(`Reason: ${response.data.description}`);
-      this.log.error(response.data);
+      this.log.error(`Request failed: ${e}`);
+
+      if (e.response) {
+        this.log.error(`Response (${e.response.statusText}): ${JSON.stringify(e.response.data)}`);
+      }
+
       throw e;
     }
+
+    // Catch-all error message
+    if (result.data.msg) {
+      throw new Error(result.data.msg);
+    }
+
+    return result;
+  }
+
+  _performLoginRequest(data = {}) {
+    const url = 'user/login';
+
+    data = {
+      email: this.username,
+      password: md5(md5(md5(this.password))),
+      ...data,
+    };
+
+    const config = {
+      baseURL: this.authBaseUrl,
+      headers: { 'x-api-key': this.authApiKey },
+    };
+
+    return this._performRequest(url, data, config);
   }
 
   async login() {
-    const headers = {
-      'Content-Type': 'application/json',
-      'x-api-key': 'WMXHYf79Nr5gIlt3r0r7p9Tcw5bvs6BB4U8O8nGJ',
-    };
-    const data = {
-      email: this.username,
-      password: md5(md5(md5(this.password))),
-    };
+    let response = await this._performLoginRequest();
 
-    try {
-      // login for accounts with multiple factor authentication disabled
-      let result = await this._performRequest('user/login', data, headers, {});
-
-      this.accessToken = result.data.access_token;
-      this.refreshToken = result.data.refresh_token;
-      let mfaDetails = result.data.mfa_details;
-
-      if (this.accessToken == null && this.mfaCode != '') {
-      // 2FA activated and pin provided
-        const dataMFA = {
-          ...data,
-          verification_id: mfaDetails.totp_apps[0].app_id,
-          mfa_type: 'TotpVerificationCode',
-          verification_code: this.mfaCode,
-        };
-
-        result = await this._performRequest('user/login', dataMFA, headers);
-
-        this.accessToken = result.data.access_token;
-        this.refreshToken = result.data.refresh_token;
-      } else if (this.accessToken == null && this.mfaCode == '') {
-        throw Error('Login with two factor authentication detected. Please provide the "mfaCode" ' +
-            'in the config.json.');
-      } else {
-        throw Error('Failed to log in due to an unknown reason.');
+    // Do we need to perform a 2-factor login?
+    if (!response.data.access_token && response.data.mfa_details) {
+      if (!this.mfaCode) {
+        throw new Error('Your account has 2-factor auth enabled. Please provide the "mfaCode" parameter in config.json.');
       }
 
-      this.log.debug(`REQUEST: ${result.status} - ${result.statusText}`);
-      this.log.debug(result.data);
+      const data = {
+        mfa_type: 'TotpVerificationCode',
+        verification_id: response.data.mfa_details.totp_apps[0].app_id,
+        verification_code: this.mfaCode,
+      };
 
-      this.log.info('Successfully logged into Wyze API');
-    } catch (e) {
-      this.log.error(`LOGIN: ${e}`);
-      throw e;
+      response = await this._performLoginRequest(data);
     }
+
+    this.accessToken = response.data.access_token;
+    this.refreshToken = response.data.refresh_token;
+
+    this.log.info('Successfully logged into Wyze API');
   }
 
   async maybeLogin() {
