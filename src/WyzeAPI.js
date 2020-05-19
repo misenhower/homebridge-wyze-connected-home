@@ -24,13 +24,13 @@ module.exports = class WyzeAPI {
     this.sv = '9d74946e652647e9b6c9d59326aef104';
 
     // Login tokens
-    this.accessToken = options.accessToken || '';
-    this.refreshToken = options.refreshToken || '';
+    this.access_token = options.access_token || '';
+    this.refresh_token = options.refresh_token || '';
   }
 
   getRequestData() {
     return {
-      'access_token': this.accessToken,
+      'access_token': this.access_token,
       'app_name': this.appName,
       'app_ver': this.appVer,
       'app_version': this.appVersion,
@@ -43,6 +43,13 @@ module.exports = class WyzeAPI {
   }
 
   async request(url, data = {}) {
+    await this.maybeLogin();
+
+    data = {
+      ...this.getRequestData(),
+      ...data,
+    };
+
     try {
       return await this._performRequest(url, data);
     } catch (e) {
@@ -108,48 +115,43 @@ module.exports = class WyzeAPI {
   }
 
   async login() {
-    let response = await this._performLoginRequest();
+    let result = await this._performLoginRequest();
 
     // Do we need to perform a 2-factor login?
-    if (!response.data.access_token && response.data.mfa_details) {
+    if (!result.data.access_token && result.data.mfa_details) {
       if (!this.mfaCode) {
         throw new Error('Your account has 2-factor auth enabled. Please provide the "mfaCode" parameter in config.json.');
       }
 
       const data = {
         mfa_type: 'TotpVerificationCode',
-        verification_id: response.data.mfa_details.totp_apps[0].app_id,
+        verification_id: result.data.mfa_details.totp_apps[0].app_id,
         verification_code: this.mfaCode,
       };
 
-      response = await this._performLoginRequest(data);
+      result = await this._performLoginRequest(data);
     }
 
-    this.accessToken = response.data.access_token;
-    this.refreshToken = response.data.refresh_token;
+    this.access_token = result.data.access_token;
+    this.refresh_token = result.data.refresh_token;
 
     this.log.info('Successfully logged into Wyze API');
   }
 
   async maybeLogin() {
-    if (!this.accessToken) {
+    if (!this.access_token) {
       await this.login();
     }
   }
 
   async getObjectList() {
-    await this.maybeLogin();
-
-    const result = await this.request('app/v2/home_page/get_object_list', this.getRequestData());
+    const result = await this.request('app/v2/home_page/get_object_list');
 
     return result.data;
   }
 
   async getPropertyList(deviceMac, deviceModel) {
-    await this.maybeLogin();
-
     const data = {
-      ...this.getRequestData(),
       device_mac: deviceMac,
       device_model: deviceModel,
     };
@@ -160,10 +162,7 @@ module.exports = class WyzeAPI {
   }
 
   async setProperty(deviceMac, deviceModel, propertyId, propertyValue) {
-    await this.maybeLogin();
-
     const data = {
-      ...this.getRequestData(),
       device_mac: deviceMac,
       device_model: deviceModel,
       pid: propertyId,
