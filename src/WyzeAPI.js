@@ -47,72 +47,71 @@ module.exports = class WyzeAPI {
   }
 
   async _performRequest(url, data = {}, headers = {}) {
-    var baseUrl = (url == 'user/login') ? 'https://auth-prod.api.wyze.com' : this.baseUrl
-    
+    let baseUrl = (url == 'user/login') ? 'https://auth-prod.api.wyze.com' : this.baseUrl;
+
     const request = {
       method: 'post',
       url: url,
       data: data,
       baseURL: baseUrl,
       headers: headers,
-    }
-    
+    };
+
     this.log.debug(`Performing request: ${url}`);
     this.log.debug(request);
-    
+
     try {
-      var result = await axios(request);
+      let result = await axios(request);
       this.log.debug('Response:');
       this.log.debug(result);
+      return result;
     } catch (e) {
-      var response = e.response;
+      let response = e.response;
       this.log.error(`REQUEST: ${e} - ${response.statusText}`);
       this.log.error(`Reason: ${response.data.description}`);
       this.log.error(response.data);
       throw e;
     }
-
-    return result;
   }
 
   async login() {
     const headers = {
       'Content-Type': 'application/json',
-      'x-api-key': 'WMXHYf79Nr5gIlt3r0r7p9Tcw5bvs6BB4U8O8nGJ'
-    }
+      'x-api-key': 'WMXHYf79Nr5gIlt3r0r7p9Tcw5bvs6BB4U8O8nGJ',
+    };
     const data = {
       email: this.username,
-      password: md5(md5(md5(this.password)))
-    }
+      password: md5(md5(md5(this.password))),
+    };
 
     try {
       // login for accounts with multiple factor authentication disabled
-      var result = await this._performRequest('user/login', data, headers, {});
-      
+      let result = await this._performRequest('user/login', data, headers, {});
+
       this.accessToken = result.data.access_token;
       this.refreshToken = result.data.refresh_token;
-      var mfaDetails = result.data.mfa_details;
-      
-      if(this.accessToken == null && this.mfaCode != "") {
+      let mfaDetails = result.data.mfa_details;
+
+      if (this.accessToken == null && this.mfaCode != '') {
       // 2FA activated and pin provided
         const dataMFA = {
           ...data,
           verification_id: mfaDetails.totp_apps[0].app_id,
-          mfa_type: "TotpVerificationCode",
-          verification_code: this.mfaCode
-        }
-        
+          mfa_type: 'TotpVerificationCode',
+          verification_code: this.mfaCode,
+        };
+
         result = await this._performRequest('user/login', dataMFA, headers);
-      
+
         this.accessToken = result.data.access_token;
         this.refreshToken = result.data.refresh_token;
-      } else if(this.accessToken == null && this.mfaCode == "") {
+      } else if (this.accessToken == null && this.mfaCode == '') {
         throw Error('Login with two factor authentication detected. Please provide the "mfaCode" ' +
             'in the config.json.');
       } else {
         throw Error('Failed to log in due to an unknown reason.');
       }
-        
+
       this.log.debug(`REQUEST: ${result.status} - ${result.statusText}`);
       this.log.debug(result.data);
 
