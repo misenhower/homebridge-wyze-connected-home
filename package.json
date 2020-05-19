@@ -4,6 +4,9 @@
   "description": "Wyze Connected Home plugin for Homebridge",
   "license": "MIT",
   "main": "src/index.js",
+  "scripts": {
+    "lint": "yarn eslint */**/*.{js,ts,tsx} --quiet --fix"
+  },
   "keywords": [
     "homebridge-plugin"
   ],
