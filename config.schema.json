@@ -34,8 +34,8 @@
         "required": false
       },
       "mfaCode": {
-        "title": "Google Authenticator pin for two factor authentication",
-        "description": "The 6 digits code",
+        "title": "One-time Password (for two-factor authentication)",
+        "description": "Only required for initial login if you have two-factor authentication enabled on your Wyze account",
         "type": "string",
         "default": "",
         "required": false
