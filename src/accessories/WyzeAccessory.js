@@ -11,6 +11,10 @@ module.exports = class WyzeAccessory {
     this.plugin = plugin;
     this.homeKitAccessory = homeKitAccessory;
   }
+  
+  get display_name() {
+    return this.homeKitAccessory.displayName;
+  }
 
   get mac() {
     return this.homeKitAccessory.context.mac;

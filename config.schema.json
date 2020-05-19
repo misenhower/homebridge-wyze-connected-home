@@ -32,6 +32,13 @@
         "type": "integer",
         "default": 10000,
         "required": false
+      },
+      "mfaCode": {
+        "title": "One-time Password (for two-factor authentication)",
+        "description": "Only required for initial login if you have two-factor authentication enabled on your Wyze account",
+        "type": "string",
+        "default": "",
+        "required": false
       }
     }
   },

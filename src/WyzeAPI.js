@@ -1,26 +1,39 @@
 const axios = require('axios');
 const md5 = require('md5');
+const fs = require('fs').promises;
+const path = require('path');
+const { homebridge, UUIDGen } = require('./types');
 
 module.exports = class WyzeAPI {
   constructor(options, log) {
     this.log = log;
 
+    // User login parameters
     this.username = options.username;
     this.password = options.password;
-    this.baseUrl = options.baseUrl || 'https://api.wyzecam.com:8443';
+    this.mfaCode = options.mfaCode;
+
+    // URLs
+    this.authBaseUrl = options.authBaseUrl || 'https://auth-prod.api.wyze.com';
+    this.apiBaseUrl = options.apiBaseUrl || options.baseUrl || 'https://api.wyzecam.com';
+
+    // App emulation constants
+    this.authApiKey = options.authApiKey || 'WMXHYf79Nr5gIlt3r0r7p9Tcw5bvs6BB4U8O8nGJ';
     this.phoneId = options.phoneId || 'bc151f39-787b-4871-be27-5a20fd0a1937';
     this.appName = options.appName || 'com.hualai.WyzeCam';
-    this.appVer = options.appVer || 'com.hualai.WyzeCam___2.10.62';
-    this.appVersion = options.appVersion || '2.10.62';
+    this.appVer = options.appVer || 'com.hualai.WyzeCam___2.10.72';
+    this.appVersion = options.appVersion || '2.10.72';
     this.sc = '9f275790cab94a72bd206c8876429f3c';
     this.sv = '9d74946e652647e9b6c9d59326aef104';
-    this.accessToken = options.accessToken || '';
-    this.refreshToken = options.refreshToken || '';
+
+    // Login tokens
+    this.access_token = '';
+    this.refresh_token = '';
   }
 
-  getRequestData() {
+  getRequestData(data = {}) {
     return {
-      'access_token': this.accessToken,
+      'access_token': this.access_token,
       'app_name': this.appName,
       'app_ver': this.appVer,
       'app_version': this.appVersion,
@@ -29,39 +42,64 @@ module.exports = class WyzeAPI {
       'sc': this.sc,
       'sv': this.sv,
       'ts': (new Date).getTime(),
+      ...data,
     };
   }
 
   async request(url, data = {}) {
+    await this.maybeLogin();
+
     try {
-      return await this._performRequest(url, data);
+      return await this._performRequest(url, this.getRequestData(data));
     } catch (e) {
       this.log.debug(e);
+
+      if (this.refresh_token) {
+        this.log.error('Error, refreshing access token and trying again');
+
+        try {
+          await this.refreshToken();
+          return await this._performRequest(url, this.getRequestData(data));
+        } catch (e) {
+          //
+        }
+      }
+
       this.log.error('Error, logging in and trying again');
 
-      // Log in and try again
       await this.login();
-      return this._performRequest(url, data);
+      return this._performRequest(url, this.getRequestData(data));
     }
   }
 
-  async _performRequest(url, data = {}) {
-    this.log.debug(`Performing request: ${url}`);
-
-    const result = await axios({
+  async _performRequest(url, data = {}, config = {}) {
+    config = {
+      method: 'POST',
       url,
       data,
-      baseURL: this.baseUrl,
-      method: 'POST',
-    });
+      baseURL: this.apiBaseUrl,
+      ...config,
+    };
 
-    if (result.data.msg === 'AccessTokenError') {
-      throw new Error('AccessTokenError');
+    this.log.debug(`Performing request: ${url}`);
+    this.log.debug(`Request config: ${JSON.stringify(config)}`);
+
+    let result;
+
+    try {
+      result = await axios(config);
+      this.log.debug(`API response: ${JSON.stringify(result.data)}`);
+    } catch (e) {
+      this.log.error(`Request failed: ${e}`);
+
+      if (e.response) {
+        this.log.error(`Response (${e.response.statusText}): ${JSON.stringify(e.response.data)}`);
+      }
+
+      throw e;
     }
 
-    this.log.debug(`API response: ${JSON.stringify(result.data)}`);
-
-    // Catch-all error
+    // Catch-all error message
     if (result.data.msg) {
       throw new Error(result.data.msg);
     }
@@ -69,42 +107,106 @@ module.exports = class WyzeAPI {
     return result;
   }
 
-  async login() {
-    const data = {
-      ...this.getRequestData(),
-      access_token: '',
-      user_name: this.username,
-      password: md5(md5(this.password)),
-      two_factor_auth: '',
+  _performLoginRequest(data = {}) {
+    const url = 'user/login';
+
+    data = {
+      email: this.username,
+      password: md5(md5(md5(this.password))),
+      ...data,
     };
 
-    const result = await this._performRequest('app/user/login', data);
+    const config = {
+      baseURL: this.authBaseUrl,
+      headers: { 'x-api-key': this.authApiKey },
+    };
 
-    this.accessToken = result.data.data.access_token;
-    this.refreshToken = result.data.data.refresh_token;
+    return this._performRequest(url, data, config);
+  }
+
+  async login() {
+    let result = await this._performLoginRequest();
+
+    // Do we need to perform a 2-factor login?
+    if (!result.data.access_token && result.data.mfa_details) {
+      if (!this.mfaCode) {
+        throw new Error('Your account has 2-factor auth enabled. Please provide the "mfaCode" parameter in config.json.');
+      }
+
+      const data = {
+        mfa_type: 'TotpVerificationCode',
+        verification_id: result.data.mfa_details.totp_apps[0].app_id,
+        verification_code: this.mfaCode,
+      };
+
+      result = await this._performLoginRequest(data);
+    }
+
+    await this._updateTokens(result.data);
 
     this.log.info('Successfully logged into Wyze API');
   }
 
   async maybeLogin() {
-    if (!this.accessToken) {
+    if (!this.access_token) {
+      await this._loadPersistedTokens();
+    }
+
+    if (!this.access_token) {
       await this.login();
     }
   }
 
-  async getObjectList() {
-    await this.maybeLogin();
+  async refreshToken() {
+    const data = {
+      ...this.getRequestData(),
+      refresh_token: this.refresh_token,
+    };
 
-    const result = await this.request('app/v2/home_page/get_object_list', this.getRequestData());
+    const result = await this._performRequest('app/user/refresh_token', data);
+
+    await this._updateTokens(result.data.data);
+  }
+
+  async _updateTokens({ access_token, refresh_token }) {
+    this.access_token = access_token;
+    this.refresh_token = refresh_token;
+    await this._persistTokens();
+  }
+
+  _tokenPersistPath() {
+    const uuid = UUIDGen.generate(this.username);
+    return path.join(homebridge.user.persistPath(), `wyze-${uuid}.json`);
+  }
+
+  async _persistTokens() {
+    const data = {
+      access_token: this.access_token,
+      refresh_token: this.refresh_token,
+    };
+
+    await fs.writeFile(this._tokenPersistPath(), JSON.stringify(data));
+  }
+
+  async _loadPersistedTokens() {
+    try {
+      let data = await fs.readFile(this._tokenPersistPath());
+      data = JSON.parse(data);
+      this.access_token = data.access_token;
+      this.refresh_token = data.refresh_token;
+    } catch (e) {
+      //
+    }
+  }
+
+  async getObjectList() {
+    const result = await this.request('app/v2/home_page/get_object_list');
 
     return result.data;
   }
 
   async getPropertyList(deviceMac, deviceModel) {
-    await this.maybeLogin();
-
     const data = {
-      ...this.getRequestData(),
       device_mac: deviceMac,
       device_model: deviceModel,
     };
@@ -115,10 +217,7 @@ module.exports = class WyzeAPI {
   }
 
   async setProperty(deviceMac, deviceModel, propertyId, propertyValue) {
-    await this.maybeLogin();
-
     const data = {
-      ...this.getRequestData(),
       device_mac: deviceMac,
       device_model: deviceModel,
       pid: propertyId,
