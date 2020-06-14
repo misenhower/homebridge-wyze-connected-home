@@ -146,7 +146,7 @@ module.exports = class WyzeConnectedHome {
       accessory = new accessoryClass(this, homeKitAccessory);
       this.accessories.push(accessory);
     } else {
-      this.log.debug(`Unrecognized accessory, removing: ${homeKitAccessory.displayName}`);
+      this.log.debug(`Unrecognized accessory type "${homeKitAccessory.context.product_type}", removing: ${homeKitAccessory.displayName}`);
       this.api.unregisterPlatformAccessories(PLUGIN_NAME, PLATFORM_NAME, [homeKitAccessory]);
     }
   }

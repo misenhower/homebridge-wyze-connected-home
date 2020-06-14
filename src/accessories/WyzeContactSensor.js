@@ -16,7 +16,7 @@ module.exports = class WyzeContactSensor extends WyzeAccessory {
     let service = this.homeKitAccessory.getService(HOMEBRIDGE_SERVICE);
 
     if (!service) {
-      this.plugin.log.debug(`[ContactSensor] Adding service for ${this.display_name}"`);
+      this.plugin.log.debug(`[ContactSensor] Adding service for "${this.display_name}"`);
       service = this.homeKitAccessory.addService(HOMEBRIDGE_SERVICE);
     }
 
@@ -24,13 +24,12 @@ module.exports = class WyzeContactSensor extends WyzeAccessory {
   }
 
   getOnCharacteristic() {
-    this.plugin.log.debug(`[ContactSensor] Fetching status of ${this.display_name}"`);
+    this.plugin.log.debug(`[ContactSensor] Fetching status of "${this.display_name}"`);
     return this.getSensorService().getCharacteristic(HOMEBRIDGE_CHARACTERISTIC);
   }
-  
+
   updateCharacteristics(device) {
-    this.plugin.log.debug(`[ContactSensor] Updating status of ${this.display_name}"`);
+    this.plugin.log.debug(`[ContactSensor] Updating status of "${this.display_name}"`);
     this.getOnCharacteristic().updateValue(device.device_params.open_close_state);
   }
-  
 };
