@@ -1,6 +1,9 @@
 # homebridge-wyze-connected-home
 ## Releases
 
+### v0.5.1
+- Improve debug logging for Contact and Motion sensors.
+
 ### v0.5.0
 - Added support to Contact and Motion sensors
 - Added support to two factor authentication (2FA) via Authenticator app
