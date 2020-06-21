@@ -1,6 +1,9 @@
 # homebridge-wyze-connected-home
 ## Releases
 
+### v0.5.2
+- Fixed bug related to not finding accessory to remove.
+
 ### v0.5.1
 - Improve debug logging for Contact and Motion sensors.
 

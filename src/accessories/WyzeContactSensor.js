@@ -8,7 +8,7 @@ module.exports = class WyzeContactSensor extends WyzeAccessory {
   constructor(plugin, homeKitAccessory) {
     super(plugin, homeKitAccessory);
 
-    this.getOnCharacteristic();
+    this.getOnCharacteristic().on('set', this.set.bind(this));
   }
 
   getSensorService() {
@@ -31,5 +31,16 @@ module.exports = class WyzeContactSensor extends WyzeAccessory {
   updateCharacteristics(device) {
     this.plugin.log.debug(`[ContactSensor] Updating status of "${this.display_name}"`);
     this.getOnCharacteristic().updateValue(device.device_params.open_close_state);
+  }
+  
+  async set(value, callback) {
+    this.plugin.log.info(`Setting state of ${this.homeKitAccessory.context.mac} to ${value}`);
+
+    try {
+      await this.setProperty('open_close_state', (value) ? '1' : '0');
+      callback();
+    } catch (e) {
+      callback(e);
+    }
   }
 };

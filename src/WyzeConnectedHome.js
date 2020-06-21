@@ -135,11 +135,14 @@ module.exports = class WyzeConnectedHome {
   // Homebridge calls this method on boot to reinitialize previously-discovered devices
   configureAccessory(homeKitAccessory) {
     // Make sure we haven't set up this accessory already
+	this.log.debug(`Retrieving list of accessories ...`);
     let accessory = this.accessories.find(a => a.homeKitAccessory === homeKitAccessory);
     if (accessory) {
+      this.log.debug(`Accessory found: ${homeKitAccessory.displayName}`);
       return;
     }
 
+    this.log.debug(`Accessory not found: ${homeKitAccessory.displayName}`);
     let accessoryClass = this.getAccessoryClass(homeKitAccessory.context.product_type);
     if (accessoryClass) {
       this.log.debug(`Configuring accessory: ${homeKitAccessory.displayName}`);
