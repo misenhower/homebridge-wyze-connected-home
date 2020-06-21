@@ -8,7 +8,7 @@ module.exports = class WyzeMotionSensor extends WyzeAccessory {
   constructor(plugin, homeKitAccessory) {
     super(plugin, homeKitAccessory);
 
-    this.getOnCharacteristic();
+    this.getOnCharacteristic().on('set', this.set.bind(this));
   }
 
   getSensorService() {
@@ -31,5 +31,16 @@ module.exports = class WyzeMotionSensor extends WyzeAccessory {
   updateCharacteristics(device) {
     this.plugin.log.debug(`[MotionSensor] Updating status of "${this.display_name}"`);
     this.getOnCharacteristic().updateValue(device.device_params.motion_state);
+  }
+  
+  async set(value, callback) {
+    this.plugin.log.info(`Setting state of ${this.homeKitAccessory.context.mac} to ${value}`);
+
+    try {
+      await this.setProperty('motion_state', (value) ? '1' : '0');
+      callback();
+    } catch (e) {
+      callback(e);
+    }
   }
 };
