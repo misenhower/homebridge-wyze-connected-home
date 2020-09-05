@@ -39,6 +39,13 @@
         "type": "string",
         "default": "",
         "required": false
+      },
+      "phoneId": {
+        "title": "Phone ID",
+        "description": "The phone id used by the Wyze App. This value is just found by intercepting your phone's traffic. If no phoneId is specified, a default value will be used.",
+        "type": "string",
+        "default": "",
+        "required": false
       }
     }
   },
