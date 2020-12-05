@@ -1,7 +1,7 @@
 const { Service, Characteristic } = require('../types');
 
 // Responses from the Wyze API can lag a little after a new value is set
-const UPDATE_THROTTLE_MS = 1000;
+const UPDATE_THROTTLE_MS = 3000;
 
 module.exports = class WyzeAccessory {
   constructor(plugin, homeKitAccessory) {
@@ -75,6 +75,7 @@ module.exports = class WyzeAccessory {
 
   async setProperty(property, value) {
     try {
+      this.plugin.log.info(`setProperty ${property} to ${value}`);
       this.updating = true;
 
       let response = await this.plugin.client.setProperty(this.mac, this.product_model, property, value);
