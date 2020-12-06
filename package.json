@@ -5,7 +5,8 @@
   "license": "MIT",
   "main": "src/index.js",
   "scripts": {
-    "lint": "yarn eslint */**/*.{js,ts,tsx} --quiet --fix"
+    "lint": "yarn eslint */**/*.{js,ts,tsx} --quiet --fix",
+    "build": "rm -rf lib && babel src -d lib && cp package.json config.schema.json README.md lib/"
   },
   "keywords": [
     "homebridge-plugin"
@@ -27,6 +28,13 @@
     "md5": "^2.2.1"
   },
   "devDependencies": {
-    "eslint": "^6.8.0"
+    "@babel/cli": "^7.10.1",
+    "@babel/core": "^7.10.2",
+    "@babel/node": "^7.10.1",
+    "@babel/plugin-proposal-class-properties": "^7.10.1",
+    "@babel/preset-env": "^7.10.2",
+    "babel-eslint": "^10.1.0",
+    "eslint": "^6.8.0",
+    "eslint-plugin-babel": "^5.3.1"
   }
 }
