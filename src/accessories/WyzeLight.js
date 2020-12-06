@@ -60,6 +60,10 @@ module.exports = class WyzeLight extends WyzeAccessory {
     return this.getService().getCharacteristic(characteristic);
   }
 
+  sleep(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+  }
+
   async setOn(value, callback) {
     this.plugin.log.info(`Setting power for ${this.homeKitAccessory.context.mac} to ${value}`);
 
@@ -72,6 +76,7 @@ module.exports = class WyzeLight extends WyzeAccessory {
   }
 
   async setBrightness(value, callback) {
+    await this.sleep(500);
     this.plugin.log.info(`Setting brightness for ${this.homeKitAccessory.context.mac} to ${value}`);
 
     try {
@@ -83,6 +88,8 @@ module.exports = class WyzeLight extends WyzeAccessory {
   }
 
   async setColorTemperature(value, callback) {
+    await this.sleep(1000);
+
     let floatValue = this._rangeToFloat(value, HOMEKIT_COLOR_TEMP_MIN, HOMEKIT_COLOR_TEMP_MAX);
     let wyzeValue = this._floatToRange(floatValue, WYZE_COLOR_TEMP_MIN, WYZE_COLOR_TEMP_MAX);
 
