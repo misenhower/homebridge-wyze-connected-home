@@ -1,6 +1,9 @@
 # homebridge-wyze-connected-home
 ## Releases
 
+### v0.5.2
+- Added support for Wyze Outdoor Plug
+
 ### v0.5.1
 - Improve debug logging for Contact and Motion sensors.
 
