@@ -93,7 +93,7 @@ module.exports = class WyzeConnectedHome {
   }
 
   async loadDevice(device, timestamp) {
-    let accessoryClass = this.getAccessoryClass(device.product_type);
+    let accessoryClass = this.getAccessoryClass(device.product_type,device.product_model);
     if (!accessoryClass) {
       this.log.debug(`Unsupported device type: ${device.product_type}`);
       return;
@@ -112,8 +112,10 @@ module.exports = class WyzeConnectedHome {
     return accessory;
   }
 
-  getAccessoryClass(type) {
+  getAccessoryClass(type,model) {
     switch (type) {
+      case 'OutdoorPlug':
+        if (model == 'WLPPO') return;  // Discard entry for main unit. Only include the 2 electrical outlets.
       case 'Plug':
         return WyzePlug;
       case 'Light':
@@ -140,7 +142,7 @@ module.exports = class WyzeConnectedHome {
       return;
     }
 
-    let accessoryClass = this.getAccessoryClass(homeKitAccessory.context.product_type);
+    let accessoryClass = this.getAccessoryClass(homeKitAccessory.context.product_type,homeKitAccessory.context.product_model);
     if (accessoryClass) {
       this.log.debug(`Configuring accessory: ${homeKitAccessory.displayName}`);
       accessory = new accessoryClass(this, homeKitAccessory);
