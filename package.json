@@ -10,13 +10,13 @@
   "keywords": [
     "homebridge-plugin"
   ],
-  "homepage": "http://github.com/misenhower/homebridge-wyze-connected-home",
+  "homepage": "http://github.com/RMCob/homebridge-wyze-connected-home",
   "repository": {
     "type": "git",
-    "url": "git://github.com/misenhower/homebridge-wyze-connected-home.git"
+    "url": "git://github.com/RMCob/homebridge-wyze-connected-home.git"
   },
   "bugs": {
-    "url": "http://github.com/misenhower/homebridge-wyze-connected-home/issues"
+    "url": "http://github.com/RMCob/homebridge-wyze-connected-home/issues"
   },
   "engines": {
     "node": ">=0.12.0",
