@@ -1,5 +1,5 @@
 {
-  "name": "homebridge-wyze-connected-home",
+  "name": "homebridge-wyze-connected-home-op",
   "version": "0.5.2",
   "description": "Wyze Connected Home plugin for Homebridge",
   "license": "MIT",
@@ -10,13 +10,13 @@
   "keywords": [
     "homebridge-plugin"
   ],
-  "homepage": "http://github.com/RMCob/homebridge-wyze-connected-home",
+  "homepage": "http://github.com/RMCob/homebridge-wyze-connected-home-op",
   "repository": {
     "type": "git",
-    "url": "git://github.com/RMCob/homebridge-wyze-connected-home.git"
+    "url": "git://github.com/RMCob/homebridge-wyze-connected-home-op.git"
   },
   "bugs": {
-    "url": "http://github.com/RMCob/homebridge-wyze-connected-home/issues"
+    "url": "http://github.com/RMCob/homebridge-wyze-connected-home-op/issues"
   },
   "engines": {
     "node": ">=0.12.0",
