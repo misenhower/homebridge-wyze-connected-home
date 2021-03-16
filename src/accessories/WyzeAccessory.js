@@ -38,6 +38,7 @@ module.exports = class WyzeAccessory {
       mac: device.mac,
       product_type: device.product_type,
       product_model: device.product_model,
+      nickname: device.nickname,
     };
 
     this.homeKitAccessory.getService(Service.AccessoryInformation)
