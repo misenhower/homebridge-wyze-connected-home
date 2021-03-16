@@ -29,7 +29,7 @@ module.exports = class WyzePlug extends WyzeAccessory {
   }
 
   async set(value, callback) {
-    this.plugin.log.info(`Setting power for ${this.homeKitAccessory.context.mac} to ${value}`);
+    this.plugin.log.info(`Setting power for ${this.homeKitAccessory.context.mac} (${this.homeKitAccessory.context.nickname}) to ${value}`);
 
     try {
       await this.setProperty(WYZE_API_POWER_PROPERTY, (value) ? '1' : '0');
