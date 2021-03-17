@@ -1,6 +1,9 @@
 # homebridge-wyze-connected-home
 ## Releases
 
+### v0.5.2.1
+- Improve logfile output for Bulb and Outdoor Plug
+
 ### v0.5.2
 - Added support for Wyze Outdoor Plug
 
