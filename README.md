@@ -4,6 +4,7 @@ This plugin adds support for Wyze Connected Home devices to [Homebridge](https:/
 
 ## Supported Devices
 - Light Bulb
+- Color Bulb (Mesh Light)
 - Plug
 - Contact Sensor
 - Motion Sensor
