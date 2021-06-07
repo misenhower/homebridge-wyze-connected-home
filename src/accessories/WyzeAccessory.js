@@ -85,4 +85,15 @@ module.exports = class WyzeAccessory {
       this.updating = false;
     }
   }
+  async runActionList(property, value) {
+    try {
+      this.updating = true;
+
+      let response = await this.plugin.client.runActionList(this.mac, this.product_model, property, value);
+
+      this.lastTimestamp = response.ts;
+    } finally {
+      this.updating = false;
+    }
+  }
 };
