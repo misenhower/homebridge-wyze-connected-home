@@ -21,10 +21,11 @@ module.exports = class WyzeAPI {
     this.authApiKey = options.authApiKey || 'WMXHYf79Nr5gIlt3r0r7p9Tcw5bvs6BB4U8O8nGJ';
     this.phoneId = options.phoneId || 'bc151f39-787b-4871-be27-5a20fd0a1937';
     this.appName = options.appName || 'com.hualai.WyzeCam';
-    this.appVer = options.appVer || 'com.hualai.WyzeCam___2.10.72';
-    this.appVersion = options.appVersion || '2.10.72';
+    this.appVer = options.appVer || 'com.hualai.WyzeCam___2.18.44';
+    this.appVersion = options.appVersion || '2.18.44';
     this.sc = '9f275790cab94a72bd206c8876429f3c';
     this.sv = '9d74946e652647e9b6c9d59326aef104';
+    this.userAgent = options.userAgent || "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/14.1 Safari/605.1.15";
 
     // Login tokens
     this.access_token = '';
@@ -118,7 +119,7 @@ module.exports = class WyzeAPI {
 
     const config = {
       baseURL: this.authBaseUrl,
-      headers: { 'x-api-key': this.authApiKey },
+      headers: { 'x-api-key': this.authApiKey, "User-Agent": this.userAgent },
     };
 
     return this._performRequest(url, data, config);
@@ -225,6 +226,47 @@ module.exports = class WyzeAPI {
     };
 
     const result = await this.request('app/v2/device/set_property', data);
+
+    return result.data;
+  }
+
+  async runActionList(deviceMac, deviceModel, propertyId, propertyValue) {
+    // Wyze Color Bulbs use a new run_action_list endpoint instead of set_property
+    const plist = [
+      {
+        pid: propertyId,
+        pvalue: String(propertyValue),
+      }
+    ];
+    if (propertyId != "P3") {
+      plist.push({
+        pid: "P3",
+        pvalue: "1",
+      })
+    };
+    const innerList = [
+      {
+        mac: deviceMac,
+        plist: plist,
+      }
+    ];
+    const actionParams = {
+      list: innerList,
+    };
+    const actionList = [
+      {
+        instance_id: deviceMac,
+        action_params: actionParams,
+        provider_key: deviceModel,
+        action_key: "set_mesh_property",
+      }
+    ];
+    const data = {
+      action_list: actionList,
+    };
+    this.log.debug(`run_action_list Data Body: ${JSON.stringify(data)}`);
+
+    const result = await this.request('app/v2/auto/run_action_list', data);
 
     return result.data;
   }
