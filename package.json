@@ -23,7 +23,7 @@
     "homebridge": ">=0.2.0"
   },
   "dependencies": {
-    "axios": "^0.19.2",
+    "axios": "^0.21.1",
     "colorsys": "^1.0.22",
     "md5": "^2.2.1"
   },
