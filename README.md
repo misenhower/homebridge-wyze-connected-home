@@ -43,8 +43,9 @@ Supported devices will be discovered and added to Homebridge automatically.
 ## Other Info
 
 Special thanks to the following projects for reference and inspiration:
-[ha-wyzeapi](https://github.com/JoshuaMulliken/ha-wyzeapi), a Wyze integration for Home Assistant.
-[wyze-node](https://github.com/noelportugal/wyze-node), a Node library for the Wyze API.
+
+- [ha-wyzeapi](https://github.com/JoshuaMulliken/ha-wyzeapi), a Wyze integration for Home Assistant.
+- [wyze-node](https://github.com/noelportugal/wyze-node), a Node library for the Wyze API.
 
 Thanks to [misenhower](https://github.com/misenhower/homebridge-wyze-connected-home) and [contributors](https://github.com/misenhower/homebridge-wyze-connected-home/graphs/contributors) for the original Wyze Homebridge plugin and volunteering their time to help add support for more devices and features.
 
