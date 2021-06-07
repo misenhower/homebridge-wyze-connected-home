@@ -1,5 +1,9 @@
-# homebridge-wyze-connected-home
+# homebridge-wyze-connected-home-op
 ## Releases
+
+### v0.5.4
+- Initial support for new Wyze Color Bulbs
+- Added a user agent for login request to prevent 403 error
 
 ### v0.5.3
 - Improve logfile output for Bulb and Outdoor Plug
