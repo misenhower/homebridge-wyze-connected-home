@@ -5,8 +5,11 @@ This plugin adds support for Wyze Connected Home devices to [Homebridge](https:/
 ## Supported Devices
 - Light Bulb
 - Plug
-- Contact Sensor
-- Motion Sensor
+- Outdoor Plug
+- V1 Contact Sensor
+- V1 Motion Sensor
+
+## Added User-Agent Header to API call to avoid 403 Forbidden 
 
 For more information about our version updates, please check our [change log](CHANGELOG.md).
 
