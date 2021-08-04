@@ -1,7 +1,7 @@
 # homebridge-wyze-connected-home
 ## Releases
 
-### V0.54
+### V0.5.4
 - Fixed 403 Error
 
 ### v0.5.3
