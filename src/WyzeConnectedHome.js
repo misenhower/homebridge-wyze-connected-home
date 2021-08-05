@@ -2,6 +2,7 @@ const { homebridge, Accessory, UUIDGen } = require('./types');
 const WyzeAPI = require('./WyzeAPI');
 const WyzePlug = require('./accessories/WyzePlug');
 const WyzeLight = require('./accessories/WyzeLight');
+const WyzeMeshLight = require('./accessories/WyzeMeshLight');
 const WyzeContactSensor = require('./accessories/WyzeContactSensor');
 const WyzeMotionSensor = require('./accessories/WyzeMotionSensor');
 
@@ -120,6 +121,8 @@ module.exports = class WyzeConnectedHome {
         return WyzePlug;
       case 'Light':
         return WyzeLight;
+      case 'MeshLight':
+        return WyzeMeshLight;
       case 'ContactSensor':
         return WyzeContactSensor;
       case 'MotionSensor':
