@@ -25,6 +25,8 @@ module.exports = class WyzeAPI {
     this.appVersion = options.appVersion || '2.18.44';
     this.sc = '9f275790cab94a72bd206c8876429f3c';
     this.sv = '9d74946e652647e9b6c9d59326aef104';
+    this.appKey = '275965684684dbdaf29a0ed9';
+    this.appSecret = '4deekof1ba311c5c33a9cb8e12787e8c';
     this.userAgent = options.userAgent || "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/14.1 Safari/605.1.15";
 
     // Login tokens
@@ -269,5 +271,45 @@ module.exports = class WyzeAPI {
     const result = await this.request('app/v2/auto/run_action_list', data);
 
     return result.data;
+  }
+  
+  async controlLock(deviceMac, deviceModel, action) {
+    // Reverse engineered using references from: https://github.com/shauntarves/wyze-sdk
+    const path = '/openapi/lock/v1/control';
+
+    let body = {
+      // Normal Wyze access token
+      access_token: this.access_token,
+      // The action to take on the lock, "remoteLock" or "remoteUnlock"
+      action: action,
+      // Extracted app key
+      key: this.appKey,
+      // Timestamp
+      timestamp: Date.now().toString(),
+      // Lock macs have their "uuid" prepended with their model, remove the model to get the uuid
+      uuid: this.getUuid(deviceMac, deviceModel),
+    };
+
+    // Lock requests need to be signed. This is done by md5 hashing the method, path, request body and the app secret
+    body['sign'] = md5(encodeURIComponent(`post${path}${Object.keys(body).sort().map(key => `${key}=${body[key]}`).join('&')}${this.appSecret}`));
+
+    let result;
+
+    try {
+      result = await axios.post('https://yd-saas-toc.wyzecam.com/openapi/lock/v1/control', body);
+      this.log.debug(`API response: ${JSON.stringify(result.data, null, '\t')}`);
+    } catch (e) {
+      this.log.debug(`Request failed: ${e}`);
+
+      if (e.response) {
+        this.log.info(`Response (${e.response.statusText}): ${JSON.stringify(e.response.data, null, '\t')}`);
+      }
+
+      throw e;
+    }
+  }
+
+  getUuid(deviceMac, deviceModel) {
+    return deviceMac.replace(`${deviceModel}.`, '');
   }
 };
