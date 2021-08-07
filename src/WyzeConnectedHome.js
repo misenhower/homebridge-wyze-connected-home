@@ -5,6 +5,7 @@ const WyzeLight = require('./accessories/WyzeLight');
 const WyzeMeshLight = require('./accessories/WyzeMeshLight');
 const WyzeContactSensor = require('./accessories/WyzeContactSensor');
 const WyzeMotionSensor = require('./accessories/WyzeMotionSensor');
+const WyzeLock = require('./accessories/WyzeLock');
 
 const PLUGIN_NAME = 'homebridge-wyze-connected-home';
 const PLATFORM_NAME = 'WyzeConnectedHome';
@@ -127,6 +128,8 @@ module.exports = class WyzeConnectedHome {
         return WyzeContactSensor;
       case 'MotionSensor':
         return WyzeMotionSensor;
+      case 'Lock':
+        return WyzeLock;
     }
   }
 
