@@ -1,6 +1,9 @@
 # homebridge-wyze-connected-home-op
 ## Releases
 
+### v0.5.7
+- Initial support for the Wyze Lock
+
 ### v0.5.6
 - Initial support for new Wyze Color Bulbs
 
