@@ -9,7 +9,7 @@ const WYZE_API_COLOR_PROPERTY = 'P1507';
 
 const WYZE_COLOR_TEMP_MIN = 1800;
 const WYZE_COLOR_TEMP_MAX = 6500;
-const HOMEKIT_COLOR_TEMP_MIN = 500;
+const HOMEKIT_COLOR_TEMP_MIN = 638;
 const HOMEKIT_COLOR_TEMP_MAX = 140;
 
 module.exports = class WyzeMeshLight extends WyzeAccessory {
