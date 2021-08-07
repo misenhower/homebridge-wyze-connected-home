@@ -11,7 +11,7 @@ This plugin is an actively maintained fork of misenhower's original [Wyze Homebr
 - Outdoor Plug
 - V1 Contact Sensor
 - V1 Motion Sensor
-- Wyze Lock
+- Lock
 
 For more information about our version updates, please check our [change log](CHANGELOG.md).
 
