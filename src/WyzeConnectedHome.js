@@ -3,9 +3,9 @@ const WyzeAPI = require('./WyzeAPI');
 const WyzePlug = require('./accessories/WyzePlug');
 const WyzeLight = require('./accessories/WyzeLight');
 const WyzeMeshLight = require('./accessories/WyzeMeshLight');
+const WyzeLock = require('./accessories/WyzeLock');
 const WyzeContactSensor = require('./accessories/WyzeContactSensor');
 const WyzeMotionSensor = require('./accessories/WyzeMotionSensor');
-const WyzeLock = require('./accessories/WyzeLock');
 
 const PLUGIN_NAME = 'homebridge-wyze-connected-home';
 const PLATFORM_NAME = 'WyzeConnectedHome';
