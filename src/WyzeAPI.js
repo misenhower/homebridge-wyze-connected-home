@@ -130,7 +130,7 @@ module.exports = class WyzeAPI {
   async login() {
     let result = await this._performLoginRequest();
 
-    // Do we need to perform a 2-factor login?
+    // Do we need to perform a 2-factor login
     if (!result.data.access_token && result.data.mfa_details) {
       if (!this.mfaCode) {
         throw new Error('Your account has 2-factor auth enabled. Please provide the "mfaCode" parameter in config.json.');
