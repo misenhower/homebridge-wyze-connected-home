@@ -113,7 +113,7 @@ module.exports = class WyzeMeshLight extends WyzeAccessory {
   }
 
   async setBrightness(value, callback) {
-    await this.sleep(500);
+    await this.sleep(250);
     this.plugin.log.info(`Setting brightness for ${this.homeKitAccessory.context.mac} to ${value}`);
 
     try {
@@ -125,7 +125,7 @@ module.exports = class WyzeMeshLight extends WyzeAccessory {
   }
 
   async setColorTemperature(value, callback) {
-    await this.sleep(1000);
+    await this.sleep(500);
     let floatValue = this._rangeToFloat(value, HOMEKIT_COLOR_TEMP_MIN, HOMEKIT_COLOR_TEMP_MAX);
     let wyzeValue = this._floatToRange(floatValue, WYZE_COLOR_TEMP_MIN, WYZE_COLOR_TEMP_MAX);
 
@@ -140,7 +140,7 @@ module.exports = class WyzeMeshLight extends WyzeAccessory {
   }
 
   async setHue(value, callback) {
-    await this.sleep(1500);
+    await this.sleep(750);
     this.plugin.log.info(`Setting hue (color) for ${this.homeKitAccessory.context.mac} to ${value}`);
     this.plugin.log.debug(`(H)S Values: ${value}, ${this.cache.saturation}`);
 
@@ -163,7 +163,7 @@ module.exports = class WyzeMeshLight extends WyzeAccessory {
   }
 
   async setSaturation(value, callback) {
-    await this.sleep(2000);
+    await this.sleep(1000);
     this.plugin.log.info(`Setting saturation (color) for ${this.homeKitAccessory.context.mac} to ${value}`);
     this.plugin.log.debug(`H(S) Values: ${this.cache.saturation}, ${value}`);
 
