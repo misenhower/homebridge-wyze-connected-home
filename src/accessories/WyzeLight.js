@@ -60,7 +60,7 @@ module.exports = class WyzeLight extends WyzeAccessory {
     return this.getService().getCharacteristic(characteristic);
   }
   
-   sleep(ms) {
+  sleep(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
   }
 
