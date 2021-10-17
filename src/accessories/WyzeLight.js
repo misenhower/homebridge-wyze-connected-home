@@ -76,7 +76,7 @@ module.exports = class WyzeLight extends WyzeAccessory {
   }
 
   async setBrightness(value, callback) {
-    await this.sleep(500);
+    await this.sleep(250);
     this.plugin.log.info(`Setting brightness for ${this.homeKitAccessory.context.mac} (${this.homeKitAccessory.context.nickname}) to ${value}`);
 
     try {
@@ -88,7 +88,7 @@ module.exports = class WyzeLight extends WyzeAccessory {
   }
 
   async setColorTemperature(value, callback) {
-    await this.sleep(1000);
+    await this.sleep(500);
     let floatValue = this._rangeToFloat(value, HOMEKIT_COLOR_TEMP_MIN, HOMEKIT_COLOR_TEMP_MAX);
     let wyzeValue = this._floatToRange(floatValue, WYZE_COLOR_TEMP_MIN, WYZE_COLOR_TEMP_MAX);
 
