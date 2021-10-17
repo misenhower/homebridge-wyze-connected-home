@@ -65,7 +65,7 @@ module.exports = class WyzeLight extends WyzeAccessory {
   }
 
   async setOn(value, callback) {
-    this.plugin.log.info(`Setting power for ${this.homeKitAccessory.context.mac} (${this.homeKitAccessory.context.nickname}) to ${value}`);
+    this.plugin.log.debug(`Setting power for ${this.homeKitAccessory.context.mac} (${this.homeKitAccessory.context.nickname}) to ${value}`);
 
     try {
       await this.setProperty(WYZE_API_POWER_PROPERTY, (value) ? '1' : '0');
@@ -77,7 +77,7 @@ module.exports = class WyzeLight extends WyzeAccessory {
 
   async setBrightness(value, callback) {
     await this.sleep(250);
-    this.plugin.log.info(`Setting brightness for ${this.homeKitAccessory.context.mac} (${this.homeKitAccessory.context.nickname}) to ${value}`);
+    this.plugin.log.debug(`Setting brightness for ${this.homeKitAccessory.context.mac} (${this.homeKitAccessory.context.nickname}) to ${value}`);
 
     try {
       await this.setProperty(WYZE_API_BRIGHTNESS_PROPERTY, value);
@@ -92,7 +92,7 @@ module.exports = class WyzeLight extends WyzeAccessory {
     let floatValue = this._rangeToFloat(value, HOMEKIT_COLOR_TEMP_MIN, HOMEKIT_COLOR_TEMP_MAX);
     let wyzeValue = this._floatToRange(floatValue, WYZE_COLOR_TEMP_MIN, WYZE_COLOR_TEMP_MAX);
 
-    this.plugin.log.info(`Setting color temperature for ${this.homeKitAccessory.context.mac} (${this.homeKitAccessory.context.nickname}) to ${value} (${wyzeValue})`);
+    this.plugin.log.debug(`Setting color temperature for ${this.homeKitAccessory.context.mac} (${this.homeKitAccessory.context.nickname}) to ${value} (${wyzeValue})`);
 
     try {
       await this.setProperty(WYZE_API_COLOR_TEMP_PROPERTY, wyzeValue);
