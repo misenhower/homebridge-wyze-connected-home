@@ -1,6 +1,10 @@
 # homebridge-wyze-connected-home-op
 ## Releases
 
+### v0.5.8
+- Fixed Bulbs not properly changing values when in a Scene with other Bulbs
+- Improved & streamlined logging (moved all status changes to Debug logs)
+
 ### v0.5.7
 - Initial support for the Wyze Lock
 
