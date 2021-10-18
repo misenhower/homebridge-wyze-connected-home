@@ -11,6 +11,7 @@ This plugin is an actively maintained fork of misenhower's original [Wyze Homebr
 - Outdoor Plug
 - V1 Contact Sensor
 - V1 Motion Sensor
+- Lock
 
 For more information about our version updates, please check our [change log](CHANGELOG.md).
 
@@ -47,8 +48,4 @@ Special thanks to the following projects for reference and inspiration:
 - [ha-wyzeapi](https://github.com/JoshuaMulliken/ha-wyzeapi), a Wyze integration for Home Assistant.
 - [wyze-node](https://github.com/noelportugal/wyze-node), a Node library for the Wyze API.
 
-Thanks to [misenhower](https://github.com/misenhower/homebridge-wyze-connected-home) and [contributors](https://github.com/misenhower/homebridge-wyze-connected-home/graphs/contributors) for the original Wyze Homebridge plugin and volunteering their time to help add support for more devices and features.
-
-Thanks to [mda590](https://github.com/misenhower/homebridge-wyze-connected-home/pull/35) for initial Color Bulb support.
-
-Thanks to [Chew](https://github.com/misenhower/homebridge-wyze-connected-home/pull/40) for adding a user agent for login request to prevent 403 errors.
+Thanks to [misenhower](https://github.com/misenhower/homebridge-wyze-connected-home) for the original Wyze Homebridge plugin, and thanks to [contributors](https://github.com/misenhower/homebridge-wyze-connected-home/graphs/contributors) and [other developers who were not merged](https://github.com/misenhower/homebridge-wyze-connected-home/pulls) for volunteering their time to help fix bugs and add support for more devices and features.
