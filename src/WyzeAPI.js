@@ -32,6 +32,8 @@ module.exports = class WyzeAPI {
     // Login tokens
     this.access_token = '';
     this.refresh_token = '';
+    
+    this.dumpData = true;
   }
 
   getRequestData(data = {}) {
@@ -92,6 +94,10 @@ module.exports = class WyzeAPI {
     try {
       result = await axios(config);
       this.log.debug(`API response: ${JSON.stringify(result.data)}`);
+      if (this.dumpData) {
+          this.log.info(`API response: ${JSON.stringify(result.data)}`);
+          this.dumpData = false;
+      }
     } catch (e) {
       this.log.error(`Request failed: ${e}`);
 
