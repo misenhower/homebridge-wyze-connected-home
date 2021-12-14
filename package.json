@@ -1,6 +1,6 @@
 {
   "name": "homebridge-wyze-connected-home-op",
-  "version": "0.5.8",
+  "version": "0.5.9-beta",
   "description": "Wyze Connected Home plugin for Homebridge",
   "license": "MIT",
   "main": "src/index.js",
