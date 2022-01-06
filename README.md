@@ -6,6 +6,7 @@ This plugin is an actively maintained fork of misenhower's original [Wyze Homebr
 
 ## Supported Devices
 - Light Bulb
+- Light Strips (On/Off only)
 - Color Bulb (Mesh Light)
 - Plug
 - Outdoor Plug
