@@ -33,7 +33,7 @@ module.exports = class WyzeAPI {
     this.access_token = '';
     this.refresh_token = '';
     
-    this.dumpData = true;
+    this.dumpData = false;  // Set this to true to log the Wyze object data blob one time at startup.
   }
 
   getRequestData(data = {}) {
@@ -96,7 +96,7 @@ module.exports = class WyzeAPI {
       this.log.debug(`API response: ${JSON.stringify(result.data)}`);
       if (this.dumpData) {
           this.log.info(`API response: ${JSON.stringify(result.data)}`);
-          this.dumpData = false;
+          this.dumpData = false; // Only want to do this once at start-up
       }
     } catch (e) {
       this.log.error(`Request failed: ${e}`);
