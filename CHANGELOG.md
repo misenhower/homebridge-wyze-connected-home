@@ -1,6 +1,10 @@
 # homebridge-wyze-connected-home-op
 ## Releases
 
+### v0.5.9
+- Initial support for Wyze Light Strips
+- Initial support for Wyze V2 Contact & Motion sensors
+
 ### v0.5.8
 - Fixed Bulbs not properly changing values when in a Scene with other Bulbs
 - Improved & streamlined logging (moved all status changes to Debug logs)
