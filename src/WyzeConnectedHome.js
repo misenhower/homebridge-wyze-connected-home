@@ -121,9 +121,9 @@ module.exports = class WyzeConnectedHome {
       case 'Plug':
         return WyzePlug;
       case 'Light':
-      case 'LightStrip':
         return WyzeLight;
       case 'MeshLight':
+      case 'LightStrip':   
         return WyzeMeshLight;
       case 'ContactSensor':
         return WyzeContactSensor;
