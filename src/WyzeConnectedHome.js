@@ -6,8 +6,10 @@ const WyzeMeshLight = require('./accessories/WyzeMeshLight');
 const WyzeLock = require('./accessories/WyzeLock');
 const WyzeContactSensor = require('./accessories/WyzeContactSensor');
 const WyzeMotionSensor = require('./accessories/WyzeMotionSensor');
+const WyzeTemperature = require('./accessories/WyzeTemperature')
+const WyzeHumidity = require('./accessories/WyzeHumidity')
 
-const PLUGIN_NAME = 'homebridge-wyze-connected-home';
+const PLUGIN_NAME = 'homebridge-wyze-connected-home-op';
 const PLATFORM_NAME = 'WyzeConnectedHome';
 
 const DEFAULT_REFRESH_INTERVAL = 10000;
@@ -131,6 +133,8 @@ module.exports = class WyzeConnectedHome {
         return WyzeMotionSensor;
       case 'Lock':
         return WyzeLock;
+      case 'TemperatureHumidity':
+        return WyzeTemperature, WyzeHumidity
     }
   }
 
